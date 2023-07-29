@@ -1,6 +1,41 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local Window = Rayfield:CreateWindow({
+	Name = "OreHub",
+	LoadingTitle = "OreHub",
+	LoadingSubtitle = "by OreczX",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = HubConfOre, -- Create a custom folder for your hub/game
+		FileName = "OreHub"
+	},
+        Discord = {
+        	Enabled = false,
+        	Invite = "ftMc57WuGd", -- The Discord invite code, do not include discord.gg/
+        	RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+        },
+	KeySystem = true, -- Set this to true to use our key system
+	KeySettings = {
+		Title = "OreHub",
+		Subtitle = "Key System",
+		Note = "Join the discord (discord.gg/ftMc57WuGd)",
+		FileName = "DevKey",
+		SaveKey = false,
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = "!!!:..:0r3H7b0nt09.::.:???!?"
+	}
+})
+
+local Tab = Window:CreateTab("GUIs", 4483362458) -- Title, Image
+local Section = Tab:CreateSection("GUIs")
+
+local Paragraph = Tab:CreateParagraph({Title = "NOTE", Content = "Delete this GUI"})
+
+
 if game.PlaceId == 155615604 then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
     local Window = Library.CreateLib("OreHub - Prison Life", "Sentinel")
+    local notifications = loadstring(game:HttpGet(("https://raw.githubusercontent.com/AbstractPoo/Main/main/Notifications.lua"),true))()
+
 
     -- MAIN
     local Main = Window:NewTab("Main")
@@ -46,6 +81,8 @@ if game.PlaceId == 155615604 then
 elseif game.PlaceId == 3956818381 then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
     local Window = Library.CreateLib("OreHub - Ninja Legends", "Sentinel")
+    local notifications = loadstring(game:HttpGet(("https://raw.githubusercontent.com/AbstractPoo/Main/main/Notifications.lua"),true))()
+
 
     -- MAIN
     local Main = Window:NewTab("Main")
@@ -122,6 +159,8 @@ elseif game.PlaceId == 855499080 then
         ElementColor = Color3.fromRGB(20, 20, 20)
     }
     local Window = Library.CreateLib("OreHub - Skywars", colors)
+    local notifications = loadstring(game:HttpGet(("https://raw.githubusercontent.com/AbstractPoo/Main/main/Notifications.lua"),true))()
+
 
     -- MAIN
     local Main = Window:NewTab("Main")
@@ -131,7 +170,7 @@ elseif game.PlaceId == 855499080 then
         game:GetService("Players").LocalPlayer.PlayerGui.Extra.AntiSploitClient2:Destroy()
 	    wait(1)
 	    game:GetService("Players").LocalPlayer.PlayerGui.Extra.AntiSploitClient:Destroy()
-    )
+    end)
 
     MainSection:NewLabel("It is necessary to be with the pickaxe on, so the script can run")
 
@@ -165,12 +204,47 @@ elseif game.PlaceId == 855499080 then
 	    end
     end)
 
+    MainSection:NewKeybind("Keybind", "KeybindInfo", Enum.KeyCode.F, function()
+        Library:ToggleUI()
+        
+        notifications:notify{
+
+            Title = "OreHub - Interface toggled",
+
+            Description = "Click on the keybind again to close/open!",
+
+            Accept = {
+
+                Text = "OK"
+
+            },
+
+            Length = 0.1
+
+        }
+    end)
+
      -- PLAYER
     local Player = Window:NewTab("Player")
     local PlayerSection = Player:NewSection("Player")
 
     PlayerSection:NewSlider("Walkspeed", "Changes the walkspeed", 250, 16, function(v)
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+        notifications:notify{
+
+            Title = "OreHub",
+
+            Description = "Changed walkspeed!",
+
+            Accept = {
+
+                Text = "OK"
+
+            },
+
+            Length = 5
+
+        }
     end)
 
     PlayerSection:NewSlider("Jumppower", "Changes the jumppower", 250, 50, function(v)
@@ -181,7 +255,7 @@ elseif game.PlaceId == 855499080 then
         local Player = game:GetService("Players").LocalPlayer
 	    local Mouse = Player:GetMouse()
 	    Mouse.KeyDown:connect(function(k)
-		    if _O.jumpinfinite then
+		    if _G.jumpinfinite then
 			    if k:byte() == 32 then
 				    Humanoid = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 				    Humanoid:ChangeState("Jumping")
@@ -192,49 +266,97 @@ elseif game.PlaceId == 855499080 then
 	    end)
 
         if state then
-            _O.jumpinfinite = true
+            _G.jumpinfinite = true
         else
-            _O.jumpinfinite = false
+            _G.jumpinfinite = false
         end
     end)
+    
+    PlayerSection:NewToggle("Noclip", "ToggleInfo", function(state)
+        local Noclip = nil
+        local Clip = nil
 
+        function noclip()
+	        Clip = false
+	        local function Nocl()
+		        if Clip == false and game.Players.LocalPlayer.Character ~= nil then
+			        for _,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+				        if v:IsA('BasePart') and v.CanCollide and v.Name ~= floatName then
+					        v.CanCollide = false
+				        end
+			        end
+		        end
+		        wait(0.21) -- basic optimization
+	        end
+	        Noclip = game:GetService('RunService').Stepped:Connect(Nocl)
+        end
+
+        function clip()
+	        if Noclip then Noclip:Disconnect() end
+	        Clip = true
+        end
+
+    	if state then
+        	noclip()
+    	else
+    	    clip()
+    	end
+	end)
+
+    MainSection:NewButton("Reach", "ButtonInfo", function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/tsbVWZdP"))()
+    end)
+    
     -- TELEPORT
     local Teleport = Window:NewTab("Teleport")
     local TeleportSection = Player:NewSection("Teleport")
 
     TeleportSection:NewButton("VIP Room", "Ngl just that", function()
-        local ch1 = CFrame.new(0.129652873, 264, -72.7414246)
+        local ch1 = CFrame.new(0.129652873, 200, -72.7414246)
 	    local ch2 = game:GetService("Players")
-	    local ch3 = oh2.LocalPlayer.Character.HumanoidRootPart
+	    local ch3 = ch2.LocalPlayer.Character.HumanoidRootPart
 
 
 	    ch3.CFrame = ch1
-    end
+    end)
 
     TeleportSection:NewButton("Mega VIP Room", "AA", function()
-        local ch1 = CFrame.new(0.644594908, 264, 67.4945374)
+        local ch1 = CFrame.new(0.644594908, 200, 67.4945374)
 	    local ch2 = game:GetService("Players")
-	    local ch3 = oh2.LocalPlayer.Character.HumanoidRootPart
+	    local ch3 = ch2.LocalPlayer.Character.HumanoidRootPart
 
 
 	    ch3.CFrame = ch1
-    end
+    end)
 
     TeleportSection:NewButton("Center Island", "OreHub on to babyy", function()
-        local ch1 = CFrame.new(11.3622465, 165.000183, -0.872686088)
+        local ch1 = CFrame.new(11.3622465, 120, -0.872686088)
 	    local ch2 = game:GetService("Players")
-	    local ch3 = oh2.LocalPlayer.Character.HumanoidRootPart
+	    local ch3 = ch2.LocalPlayer.Character.HumanoidRootPart
 
 
 	    ch3.CFrame = ch1
-    end
+    end)
 
     TeleportSection:NewButton("Lobby", "Hub Made by OreczX", function()
-        local ch1 = CFrame.new(-0.418475986, 268, -0.111892045)
+        local ch1 = CFrame.new(-0.418475986, 200, -0.111892045)
 	    local ch2 = game:GetService("Players")
-	    local ch3 = oh2.LocalPlayer.Character.HumanoidRootPart
+	    local ch3 = ch2.LocalPlayer.Character.HumanoidRootPart
 
 
 	    ch3.CFrame = ch1
-    end
+    end)
+    
+    
+    local Misc = Window:NewTab("Misc")
+    local MiscSection = Misc:NewSection("Misc")
+    
+    MiscSection:NewButton("Load DarkDex", "ButtonInfo", function()
+    	loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+	end)
+	
+	MiscSection:NewButton("Load Infinite Yield", "ButtonInfo", function()
+    	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source", true))()
+	end)
+    
 end
